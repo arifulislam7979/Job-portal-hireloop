@@ -18,6 +18,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/lib/auth-client";
+import UserInfo from "./UserInfo";
 
 const NAV_LINKS = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -31,10 +33,17 @@ const ctaClasses = cn(
 );
 
 export function Navbar() {
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
   const pathname = usePathname();
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+
+  // Auth pages use their own focused shell instead of the marketing navbar.
+  if (pathname === "/sign-in" || pathname === "/sign-up") {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#1F1F1F] px-3 py-3 sm:px-5 sm:py-4">
@@ -79,17 +88,29 @@ export function Navbar() {
             orientation="vertical"
             className="h-6 bg-white/15 self-center my-auto"
           />
+          {isPending ? (
+            <div className="flex items-center gap-2.5 p-1.5 animate-pulse">
+              <div className="w-9 h-9 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+              <div className="w-24 h-4 rounded-md bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+          ) : user ? (
+            <>
+              <UserInfo user={user}></UserInfo>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/sign-in"
+                className="text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+              >
+                Sign In
+              </Link>
 
-          <Link
-            href="/sign-in"
-            className="text-sm font-medium text-indigo-400 transition-colors hover:text-indigo-300"
-          >
-            Sign In
-          </Link>
-
-          <Link href="/sign-up" className={ctaClasses}>
-            Get Started
-          </Link>
+              <Link href="/sign-up" className={ctaClasses}>
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile navigation */}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Manrope, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <Navbar />
         {children}
+        <Toaster position="top-center" richColors duration={1000} />
       </body>
     </html>
   );
